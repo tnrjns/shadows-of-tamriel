@@ -1,3 +1,5 @@
+![Shadows of Tamriel](docs/banner.jpg)
+
 # Shadows of Tamriel
 
 *Assassin's Creed 1's Altaïr, in Skyrim.*
