@@ -178,8 +178,10 @@ namespace Freerun
 		case State::kHidden:
 			{
 				g.loopT += a_delta;
-				const float d = ClipDuration("hay_wait", 5.0f);
-				PlayClip("hay_wait", std::fmod(g.loopT, d) / d);
+				// AC1's low-profile hay wait: curled up, small enough to stay hidden inside the haystack (the high-profile
+				// xx_h_haystack_wait stands up - AC1's haystacks are taller than a man)
+				const float d = ClipDuration("hay_wait_low", 0.333f);
+				PlayClip("hay_wait_low", std::fmod(g.loopT, d) / d);
 				HoldAt(a_player, g.inside, g.yaw, true, true);
 				const RE::NiPoint3 in = InputWorld();
 				const float        push = std::sqrt(in.x * in.x + in.y * in.y);

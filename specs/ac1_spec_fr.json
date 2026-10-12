@@ -252,5 +252,8 @@
 ],
 "hay_out": [
 "xx_l_haystack_hop_out_tr_l_wait"
+],
+"hay_wait_low": [
+"xx_l_haystack_wait"
 ]
 }
