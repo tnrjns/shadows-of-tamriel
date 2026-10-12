@@ -12,7 +12,10 @@ namespace Freerun
 	// (then it is a pole top).
 	bool BeamAxis(const RE::NiPoint3& a_point, const RE::NiPoint3& a_near, RE::NiPoint3& a_axis);
 
-	void NarrowBegin(RE::PlayerCharacter* a_player, const RE::NiPoint3& a_point, const RE::NiPoint3& a_travel, bool a_pole);
+	void NarrowBegin(RE::PlayerCharacter* a_player, const RE::NiPoint3& a_point, const RE::NiPoint3& a_travel, bool a_pole, bool a_land = true);
+
+	// Walked onto a beam or a pole top (no jump): AC1 goes into its balance walk / perch by itself.
+	void NarrowTryWalkOn(RE::PlayerCharacter* a_player);
 	void NarrowUpdate(RE::PlayerCharacter* a_player, float a_delta);
 	bool NarrowActive();
 }

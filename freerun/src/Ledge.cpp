@@ -2,6 +2,7 @@
 #include "EdgeFinder.h"
 #include "PosePlayer.h"
 #include "TargetJump.h"
+#include "Motion.h"
 
 namespace Freerun
 {
@@ -157,10 +158,12 @@ namespace Freerun
 
 	RE::NiPoint3 LedgeHangPosition(const RE::NiPoint3& a_edge, const RE::NiPoint3& a_facing)
 	{
-		const Clip*        wait = C("hang_wait");
-		const RE::NiPoint3 h = wait ? wait->HandsAt(0.0f) : RE::NiPoint3{ 0.0f, 36.0f, 62.0f };
-		// the hands rest on the edge, just behind its lip
-		const RE::NiPoint3 grip = a_edge - a_facing * (0.04f * kUnits) - RE::NiPoint3{ 0.0f, 0.0f, 0.03f * kUnits };
+		const Clip*  wait = C("hang_wait");
+		const float  k = ActorScale(RE::PlayerCharacter::GetSingleton());
+		RE::NiPoint3 h = wait ? wait->HandsAt(0.0f) : RE::NiPoint3{ 0.0f, 38.0f, 70.0f };
+		h = h * k;
+		// the knuckles over the lip of the edge (the fingers curl over it)
+		const RE::NiPoint3 grip = a_edge + a_facing * (0.03f * kUnits) - RE::NiPoint3{ 0.0f, 0.0f, 0.02f * kUnits };
 		return grip - Right(a_facing) * h.x - a_facing * h.y - RE::NiPoint3{ 0.0f, 0.0f, h.z };
 	}
 

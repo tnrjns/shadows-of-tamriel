@@ -65,6 +65,43 @@ namespace Freerun
 		}
 	}
 
+	void SetControlsLocked(bool a_locked)
+	{
+		static bool locked = false;
+		if (locked == a_locked) {
+			return;
+		}
+		if (auto* map = RE::ControlMap::GetSingleton()) {
+			map->ToggleControls(RE::UserEvents::USER_EVENT_FLAG::kMovement, !a_locked, false);
+			map->ToggleControls(RE::UserEvents::USER_EVENT_FLAG::kJumping, !a_locked, false);
+			locked = a_locked;
+		}
+	}
+
+	float ActorScale(RE::PlayerCharacter* a_player)
+	{
+		auto* root = a_player->Get3D(false);
+		const float s = root ? root->world.scale : a_player->GetScale();
+		return s > 0.1f ? s : 1.0f;
+	}
+
+	void PlaySoundAtPlayer(RE::PlayerCharacter* a_player, const char* a_editorID)
+	{
+		auto* audio = RE::BSAudioManager::GetSingleton();
+		if (!audio) {
+			return;
+		}
+		RE::BSSoundHandle handle;
+		audio->GetSoundHandleByName(handle, a_editorID, 0x1A);
+		if (handle.IsValid()) {
+			handle.SetPosition(a_player->GetPosition());
+			if (auto* root = a_player->Get3D(false)) {
+				handle.SetObjectToFollow(root);
+			}
+			handle.Play();
+		}
+	}
+
 	float YawOf(const RE::NiPoint3& a_dir) { return std::atan2(a_dir.x, a_dir.y); }
 	RE::NiPoint3 DirOf(float a_yaw) { return { std::sin(a_yaw), std::cos(a_yaw), 0.0f }; }
 	RE::NiPoint3 RightOf(const RE::NiPoint3& a_dir) { return { a_dir.y, -a_dir.x, 0.0f }; }

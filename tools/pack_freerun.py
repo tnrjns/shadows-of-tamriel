@@ -7,8 +7,9 @@ Format (little endian):
   clips x (u16 len, name, f32 duration, u32 frames,
            frames x bones x (f32 qx qy qz qw, f32 tx ty tz)   local transforms on the Skyrim skeleton,
            frames x (f32 forward, f32 up),                      AC1 root displacement in metres (jump direction, up)
-           frames x (f32 x, y, z))                              midpoint of the hands, game units, actor space
-                                                                (x right, y forward, z up; for hanging on a ledge)
+           frames x (f32 x, y, z))                              the grip: midpoint of the two middle-finger knuckles
+                                                                (the palm, not the wrist), game units, actor space
+                                                                (x right, y forward, z up; for hanging on ledges / bars)
 """
 import sys, os, json, struct, math
 sys.path.insert(0, r'C:\Users\myste\Downloads\Altair Skyrim Native\tooling\pynifly-29.1.0\io_scene_nifly\hkx')
@@ -69,7 +70,7 @@ for nm in files:
         x, y, z = x - start[0], y - start[1], z - start[2]
         out += struct.pack('<2f', x * dirx + y * diry, z)
     # hands: forward kinematics on the Skyrim skeleton
-    hl, hr = names.index('NPC L Hand [LHnd]'), names.index('NPC R Hand [RHnd]')
+    hl, hr = names.index('NPC L Finger20 [LF20]'), names.index('NPC R Finger20 [RF20]')
     for f in range(nf):
         W, P = [None] * len(names), [None] * len(names)
         for j in range(len(names)):

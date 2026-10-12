@@ -10,6 +10,7 @@
 #include "Swing.h"
 #include "Walling.h"
 #include "HayHide.h"
+#include "Motion.h"
 #include "SKSEMenuFramework.h"
 
 namespace
@@ -31,6 +32,21 @@ namespace
 			Freerun::NarrowUpdate(a_this, a_delta);
 			Freerun::SwingUpdate(a_this, a_delta);
 			Freerun::TargetJumpUpdate(a_this, a_delta);
+
+			// while an AC1 move runs, Skyrim's own movement / jump controls are off (the plugin reads the keys itself):
+			// no running off mid-landing, no camera swinging round to follow A / D on a ledge
+			const bool busy = Freerun::TargetJumpBusy() || Freerun::LedgeActive() || Freerun::NarrowActive() ||
+			                  Freerun::SwingActive() || Freerun::WallRunActive() || Freerun::HayActive();
+			Freerun::SetControlsLocked(busy);
+			if (!busy) {
+				Freerun::RestoreGravity(a_this);  // safety net: never leave the player floating after a move
+			}
+			static float walkOnTimer = 0.0f;
+			walkOnTimer -= a_delta;
+			if (!busy && walkOnTimer <= 0.0f && Freerun::GetSettings().p4) {
+				walkOnTimer = 0.1f;
+				Freerun::NarrowTryWalkOn(a_this);
+			}
 			g_probeTimer -= a_delta;
 			const auto& cfg = Freerun::GetSettings();
 			if ((cfg.overlay || cfg.targetJumps) && !Freerun::TargetJumpActive() && !Freerun::LedgeActive() &&
@@ -68,6 +84,9 @@ namespace
 					const auto& id = b->QUserEvent();
 					if (id == ue->jump && b->IsDown()) {
 						Freerun::NotifyJumpPressed();
+					}
+					if (id == ue->sneak && b->IsDown()) {
+						Freerun::NotifySneakPressed();
 					}
 					if (b->GetDevice() == RE::INPUT_DEVICE::kKeyboard && b->IsDown() &&
 						static_cast<int>(b->GetIDCode()) == Freerun::GetSettings().prayKey && !RE::UI::GetSingleton()->GameIsPaused()) {

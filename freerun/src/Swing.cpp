@@ -27,6 +27,7 @@ namespace Freerun
 			float        loopT{ 0.0f };
 			float        jumpClock{ 0.0f };
 			int          cycles{ 0 };
+			float        energy{ 0.0f };  // swing momentum, built up with W / S (AC1 pumps the swing)
 			bool         neutral{ false };  // keys let go since the catch (a key held from the run-up doesn't drop him)
 		};
 		Swing g;
@@ -75,8 +76,9 @@ namespace Freerun
 
 	RE::NiPoint3 SwingHangPosition(const RE::NiPoint3& a_bar, const RE::NiPoint3& a_facing, const char* a_clip, float a_u)
 	{
-		const Clip*        c = FindClip(a_clip);
-		const RE::NiPoint3 h = c ? c->HandsAt(a_u) : RE::NiPoint3{ 0.0f, 0.0f, 164.0f };
+		const Clip*  c = FindClip(a_clip);
+		RE::NiPoint3 h = c ? c->HandsAt(a_u) : RE::NiPoint3{ 0.0f, 0.0f, 171.0f };
+		h = h * ActorScale(RE::PlayerCharacter::GetSingleton());
 		const RE::NiPoint3 grip = a_bar - RE::NiPoint3{ 0.0f, 0.0f, 0.04f * U };  // hands round the bar, under its top
 		return grip - RightOf(a_facing) * h.x - a_facing * h.y - RE::NiPoint3{ 0.0f, 0.0f, h.z };
 	}
@@ -89,7 +91,8 @@ namespace Freerun
 		g.bar = a_bar;
 		g.facing = a_facing;
 		g.state = State::kCatch;
-		HoldAt(a_player, SwingHangPosition(g.bar, g.facing, "swing_catch", 1.0f), YawOf(g.facing), false, true);
+		// the same spot the catch jump aimed at (the clip's first frame): no jump in position, so no camera kick
+		HoldAt(a_player, SwingHangPosition(g.bar, g.facing, "swing_catch", 0.0f), YawOf(g.facing), false, true);
 		logger::info("swing: caught the bar at ({:.0f} {:.0f} {:.0f})", a_bar.x, a_bar.y, a_bar.z);
 	}
 
@@ -116,22 +119,42 @@ namespace Freerun
 			return;
 		}
 
+		// momentum: pushing W or S pumps the swing up (AC1), it dies away slowly when you stop
+		if (std::abs(in.y) < 0.3f) {
+			g.neutral = true;
+		}
+		if (g.neutral && std::abs(in.y) > 0.5f) {
+			g.energy = std::min(1.0f, g.energy + 0.9f * a_delta);
+		} else {
+			g.energy = std::max(0.0f, g.energy - 0.2f * a_delta);
+		}
+		if (sprint) {
+			g.energy = std::min(1.0f, g.energy + 0.6f * a_delta);  // free-run: he swings through by himself
+		}
+		// the cycle runs faster and swings wider with momentum: the still free hang blended with AC1's swing cycle
 		const float d = ClipDuration("swing_loop", 1.77f);
 		const float before = std::fmod(g.loopT, d) / d;
-		g.loopT += a_delta;
+		g.loopT += a_delta * (0.45f + 0.55f * g.energy);
 		const float u = std::fmod(g.loopT, d) / d;
 		if (u < before) {
 			++g.cycles;
 		}
-		PlayClip("swing_loop", u);
-		// the hands stay on the bar while the body swings under it
-		HoldAt(a_player, SwingHangPosition(g.bar, g.facing, "swing_loop", u), YawOf(g.facing), false, true);
-
-		if (std::abs(in.x) < 0.3f && std::abs(in.y) < 0.3f) {
-			g.neutral = true;
+		const Clip* loop = FindClip("swing_loop");
+		const Clip* hang = FindClip("swing_hang");
+		if (loop && hang) {
+			Blend b;
+			b.parts.emplace_back(hang, 1.0f - g.energy);
+			b.parts.emplace_back(loop, std::max(0.001f, g.energy));
+			SetPose(b, u, 1.0f);
 		}
-		if (g.neutral && in.y < -0.5f) {
-			const RE::NiPoint3 drop = SwingHangPosition(g.bar, g.facing, "swing_loop", 0.0f) - g.facing * (0.2f * U);
+		// the hands stay on the bar while the body swings under it
+		const RE::NiPoint3 a = SwingHangPosition(g.bar, g.facing, "swing_hang", u);
+		const RE::NiPoint3 c = SwingHangPosition(g.bar, g.facing, "swing_loop", u);
+		HoldAt(a_player, a + (c - a) * g.energy, YawOf(g.facing), false, true);
+
+		// let go and drop: sneak (AC1's "empty hand")
+		if (TakeSneakPress()) {
+			const RE::NiPoint3 drop = a - g.facing * (0.2f * U);
 			HoldAt(a_player, drop, YawOf(g.facing), false, false);
 			RestoreGravity(a_player);
 			ClearPose();
@@ -139,7 +162,8 @@ namespace Freerun
 			logger::info("swing: dropped");
 			return;
 		}
-		if (ReadyToRelease(u) && (jump || (sprint && g.cycles >= 0 && g.loopT > d * 0.85f))) {
+		// let go forward into a jump at the top of the forward swing, once there is some momentum
+		if (ReadyToRelease(u) && g.energy > 0.35f && (jump || (sprint && g.energy > 0.7f))) {
 			Release(a_player, !jump);
 		}
 	}

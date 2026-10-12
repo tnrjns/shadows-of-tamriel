@@ -123,7 +123,34 @@ namespace Freerun
 
 	bool NarrowActive() { return g.state != State::kNone; }
 
-	void NarrowBegin(RE::PlayerCharacter* a_player, const RE::NiPoint3& a_point, const RE::NiPoint3& a_travel, bool a_pole)
+	void NarrowTryWalkOn(RE::PlayerCharacter* a_player)
+	{
+		auto* controller = a_player->GetCharController();
+		if (!controller || controller->context.currentState != RE::hkpCharacterStateType::kOnGround) {
+			return;
+		}
+		const RE::NiPoint3 feet = a_player->GetPosition();
+		const RE::NiPoint3 fwd = DirOf(a_player->data.angle.z);
+		const RE::NiPoint3 right = RightOf(fwd);
+		auto support = [&](const RE::NiPoint3& a_p) {
+			RE::NiPoint3 hit;
+			return CastRay(a_p + RE::NiPoint3{ 0.0f, 0.0f, 0.3f * U }, a_p - RE::NiPoint3{ 0.0f, 0.0f, 0.6f * U }, &hit) &&
+			       hit.z > feet.z - 0.35f * U;
+		};
+		if (!support(feet)) {
+			return;
+		}
+		const bool across = !support(feet + right * (0.35f * U)) && !support(feet - right * (0.35f * U));
+		if (!across) {
+			return;  // ground either side: not on a beam
+		}
+		const bool along = !support(feet + fwd * (0.35f * U)) && !support(feet - fwd * (0.35f * U));
+		RE::NiPoint3 top;
+		CastRay(feet + RE::NiPoint3{ 0.0f, 0.0f, 0.3f * U }, feet - RE::NiPoint3{ 0.0f, 0.0f, 0.6f * U }, &top);
+		NarrowBegin(a_player, { feet.x, feet.y, top.z }, fwd, along, false);
+	}
+
+	void NarrowBegin(RE::PlayerCharacter* a_player, const RE::NiPoint3& a_point, const RE::NiPoint3& a_travel, bool a_pole, bool a_land)
 	{
 		g = Narrow{};
 		g.pole = a_pole;
@@ -151,7 +178,7 @@ namespace Freerun
 				(dir > 0 ? g.sMax : g.sMin) = s;
 			}
 		}
-		g.state = State::kLand;
+		g.state = a_land ? State::kLand : State::kWait;
 		g.t = 0.0f;
 		Hold(a_player);
 		logger::info("{}: landed ({:.1f} m long)", g.pole ? "pole" : "beam", (g.sMax - g.sMin) / U);

@@ -482,9 +482,11 @@ namespace Freerun
 		// a new clip (catch -> hang -> shimmy -> pull-up ...): ease out of the last pose instead of cutting to it
 		const Clip* key = blend.parts.front().first;
 		if (key != g_xfadeKey) {
-			if (g_xfadeKey && g_prevOutR.size() == n) {
+			// a new clip, or the first AC1 clip after the game's own animation (e.g. the dive into the haystack):
+			// ease out of whatever was shown last frame instead of cutting to the new pose
+			if (g_prevOutR.size() == n) {
 				StartOffset(n);
-				g_offsetSeconds = 0.18f;
+				g_offsetSeconds = g_xfadeKey ? 0.18f : 0.3f;
 			}
 			g_xfadeKey = key;
 		}

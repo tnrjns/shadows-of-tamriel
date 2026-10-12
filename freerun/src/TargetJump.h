@@ -43,6 +43,9 @@ namespace Freerun
 
 	// The jump key press of this frame, taken by whichever move uses it (beam, pole, swing take it first).
 	bool TakeJumpPress();
+	// The sneak key press (lets go of a swing bar, AC1's empty hand).
+	void NotifySneakPressed();
+	bool TakeSneakPress();
 	void SetRawSprint(bool a_down);
 	bool RawSprint();
 
@@ -55,4 +58,6 @@ namespace Freerun
 
 	// True while a target jump is moving the player.
 	bool TargetJumpActive();
+	// True from the takeoff until the landing (reception) has finished: the player's controls stay locked.
+	bool TargetJumpBusy();
 }

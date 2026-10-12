@@ -43,12 +43,14 @@ namespace Freerun
 			bool         manual{ false };   // started from Skyrim's own jump (its behavior graph is in the jump state)
 			float        settle{ 0.0f };    // time since the hand-back, while waiting for Skyrim to register the landing
 			bool         settling{ false };
+			float        gravity{ 0.0f }, v0{ 0.0f };  // the vertical arc
 			bool         hang{ false };     // a ledge catch: ends in a hang
 			RE::NiPoint3 hangEdge, hangFacing;
 			EdgeType     type{ EdgeType::kRoof };
 			RE::NiPoint3 barFacing;         // swing bar catch
 		};
 		Jump  g_jump;
+		bool  g_rightFoot = false;  // AC1 alternates the takeoff foot: footl / footr clip sets
 		std::atomic<bool> g_jumpPressed{ false };
 		bool  g_wasInJump = false;
 		float g_cooldown = 0.0f;
@@ -201,16 +203,27 @@ namespace Freerun
 			if (g_packLoaded) {
 				const char* family = dz > 0.6f ? "up" : (dz < -0.6f ? "down" : "front");
 				const char* flightKind = j.hang ? "surface" : (j.type == EdgeType::kBar ? "swingfl" : "flight");
-				j.takeoff = Pick(a_takeoff, family, Buckets(a_takeoff, family), d);
+				// variety, as in AC1: alternate the leading foot (footl / footr clip sets) on running jumps to roofs
+				g_rightFoot = !g_rightFoot;
+				const bool  rightFoot = g_rightFoot && std::string(a_takeoff) == "takeoff" && j.type == EdgeType::kRoof && !j.hang;
+				const std::string tk = rightFoot ? "takeoffR" : a_takeoff;
+				const std::string fk = rightFoot ? "flightR" : flightKind;
+				j.takeoff = Pick(tk.c_str(), family, Buckets(a_takeoff, family), d);
 				if (j.takeoff.Empty()) {
 					j.takeoff = Pick("takeoff", family, Buckets("takeoff", family), d);
 				}
-				j.flight = Pick(flightKind, family, Buckets(flightKind, family), d);
+				j.flight = Pick(fk.c_str(), family, Buckets(flightKind, family), d);
 				if (j.flight.Empty()) {
 					j.flight = Pick("flight", family, Buckets("flight", family), d);
 				}
 				if (!j.hang && j.type == EdgeType::kRoof) {
-					j.reception = Nearest("reception", family, Buckets("reception", family), d);
+					// still sprinting: AC1's fast free-step reception runs straight on; otherwise the full one
+					const bool fast = RawSprint() || a_player->AsActorState()->IsSprinting();
+					const std::string rk = std::string(fast ? "receptionF" : "reception") + (rightFoot ? (fast ? "R" : "R") : "");
+					j.reception = Nearest(rk.c_str(), family, Buckets("reception", family), d);
+					if (j.reception.Empty()) {
+						j.reception = Nearest("reception", family, Buckets("reception", family), d);
+					}
 				}
 				j.animated = !j.takeoff.Empty() && !j.flight.Empty();
 			}
@@ -231,6 +244,16 @@ namespace Freerun
 				j.apex = g_settings.arcHeight * (0.45f + 0.07f * d + 0.35f * std::max(dz, 0.0f)) * kUnits;
 			}
 			j.phase = j.animated ? Phase::kTakeoff : Phase::kFlight;
+			// a real gravity arc for the height (AC1's items carry little lift, and a flat path down reads as running
+			// on air): z(t) = z0 + v0 t - g t^2 / 2 through the target height at T
+			{
+				const float T = j.t1 + j.t2;
+				j.gravity = 9.8f * kUnits * g_settings.arcHeight;
+				j.v0 = T > 0.01f ? ((j.to.z - j.from.z) + 0.5f * j.gravity * T * T) / T : 0.0f;
+			}
+			if (!a_manual) {
+				PlaySoundAtPlayer(a_player, "FSTStoneSolidJumpUpSD");  // Skyrim's own jump plays this for manual jumps
+			}
 			g_jump = j;
 			logger::info("{} jump: {:.1f} m ahead, {:+.1f} m, {:.2f}+{:.2f} s ({}, {})", a_manual ? "target" : "free-run", d, dz,
 				j.t1, j.t2, target->type == EdgeType::kBeam ? "beam" : (j.hang ? "ledge catch" : "roof edge"), j.animated ? "AC1 clips" : "arc");
@@ -260,10 +283,8 @@ namespace Freerun
 			const RE::NiPoint3 animEnd = j.from + j.dir * (j.dispEnd[0] * kUnits) + RE::NiPoint3{ 0.0f, 0.0f, j.dispEnd[1] * kUnits };
 			const RE::NiPoint3 anim = j.from + j.dir * (disp[0] * kUnits) + RE::NiPoint3{ 0.0f, 0.0f, disp[1] * kUnits };
 			RE::NiPoint3       p = anim + (j.to - animEnd) * s;
-			// AC1's items carry little lift; keep a minimum arc so long jumps don't read as a glide
-			// up-jumps get extra lift so the feet clear the edge they land on
-			const float rise = std::max(0.0f, (j.to.z - j.from.z) / kUnits);
-			p.z += 4.0f * (g_settings.arcHeight - 1.0f + 0.25f + 0.25f * rise) * kUnits * s * (1.0f - s) * std::min(1.0f, (j.t2 + j.t1) / 0.6f);
+			// height: a gravity arc landing exactly on the target (horizontal motion stays AC1's)
+			p.z = j.from.z + j.v0 * a_t - 0.5f * j.gravity * a_t * a_t;
 			return p;
 		}
 
@@ -336,6 +357,13 @@ namespace Freerun
 
 	namespace
 	{
+		std::atomic<bool> g_sneakPressed{ false };
+	}
+	void NotifySneakPressed() { g_sneakPressed = true; }
+	bool TakeSneakPress() { return g_sneakPressed.exchange(false); }
+
+	namespace
+	{
 		std::atomic<bool> g_rawSprint{ false };
 	}
 	void SetRawSprint(bool a_down) { g_rawSprint = a_down; }
@@ -378,6 +406,7 @@ namespace Freerun
 	}
 
 	bool TargetJumpActive() { return g_jump.phase == Phase::kTakeoff || g_jump.phase == Phase::kFlight; }
+	bool TargetJumpBusy() { return g_jump.phase != Phase::kNone; }
 
 	void TargetJumpUpdate(RE::PlayerCharacter* a_player, float a_delta)
 	{
@@ -427,6 +456,7 @@ namespace Freerun
 					break;
 				}
 				if (j.t >= T) {
+					PlaySoundAtPlayer(a_player, "FSTPlayerStoneSolidJumpDownSD");
 					bool airborneInGraph = false;
 					a_player->GetGraphVariableBool("bInJumpState", airborneInGraph);
 					if (j.manual || airborneInGraph) {
@@ -469,9 +499,27 @@ namespace Freerun
 			{
 				// back on the ground, running: AC1's free-step reception, then hand back to the game's animation
 				j.t += a_delta;
+				// carried forward by the reception's own motion (the controls stay locked until it has finished)
+				{
+					const auto  d = j.reception.DispAt(std::min(1.0f, j.t / j.tr));
+					RE::NiPoint3 p = j.to + j.dir * (d[0] * kUnits);
+					RE::NiPoint3 ground;
+					if (CastRay(p + RE::NiPoint3{ 0.0f, 0.0f, 0.5f * kUnits }, p - RE::NiPoint3{ 0.0f, 0.0f, 0.6f * kUnits }, &ground)) {
+						p.z = ground.z + 1.0f;
+					}
+					if (!j.settling) {
+						Hold(a_player, p, true);
+					}
+				}
 				if (j.t >= j.tr) {
 					ClearPose();
 					j.phase = Phase::kNone;
+					// still holding sprint / forward: keep the speed into the run instead of starting from a standstill
+					const auto m = RawMove();
+					if (auto* controller = a_player->GetCharController(); controller && (RawSprint() || m.y > 0.5f)) {
+						const float speed = (RawSprint() ? 6.5f : 3.5f) * kUnits * RE::bhkWorld::GetWorldScale();
+						controller->SetLinearVelocityImpl(RE::hkVector4(j.dir.x * speed, j.dir.y * speed, 0.0f, 0.0f));
+					}
 					break;
 				}
 				const float w = std::min(1.0f, (j.tr - j.t) / kBlendOut);
@@ -507,7 +555,7 @@ namespace Freerun
 					}
 				}
 			} else if (!inJump && g_settings.autoJump && g_settings.targetJumps && g_cooldown <= 0.0f &&
-					   a_player->AsActorState()->IsSprinting() && !LeapOfFaithArmed(a_player)) {
+					   (a_player->AsActorState()->IsSprinting() || RawSprint()) && !LeapOfFaithArmed(a_player)) {
 				// AC1 free-run: sprinting, Altair jumps by himself at the edge of a drop, or at a step up he can't run up
 				auto*      controller = a_player->GetCharController();
 				const bool grounded = controller && controller->context.currentState == RE::hkpCharacterStateType::kOnGround;
@@ -516,7 +564,7 @@ namespace Freerun
 					const Snapshot snap = Latest();
 					if (const auto* t = LandingTarget(snap); t && t->distance >= 1.0f) {
 						Start(a_player, false, t);
-						g_cooldown = 0.3f;
+						g_cooldown = 0.1f;
 					}
 				} else if (grounded) {
 					const Snapshot snap = Latest();

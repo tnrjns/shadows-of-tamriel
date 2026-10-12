@@ -182,17 +182,16 @@ namespace Freerun
 					// clear line of sight from the chest (third ray)
 					const bool sight = !Ray(world, chest, c.point + RE::NiPoint3{ 0.0f, 0.0f, 0.3f * kUnits }).hit;
 
-					c.type = narrow ? EdgeType::kBeam : (room && c.height < 2.0f ? EdgeType::kRoof : EdgeType::kHang);
-					if (narrow) {
-						// narrow across too -> a pole top; narrow and above head height -> a bar to swing on
-						const RE::NiPoint3 mid = c.point + fwd * (0.15f * kUnits);
-						const bool         l = Down(world, mid.x - right.x * 0.45f * kUnits, mid.y - right.y * 0.45f * kUnits, z + 0.2f * kUnits, z - 0.2f * kUnits).hit;
-						const bool         r = Down(world, mid.x + right.x * 0.45f * kUnits, mid.y + right.y * 0.45f * kUnits, z + 0.2f * kUnits, z - 0.2f * kUnits).hit;
-						if (c.height >= 1.4f) {
-							c.type = EdgeType::kBar;
-						} else if (!l && !r) {
-							c.type = EdgeType::kPole;
-						}
+					// narrow ahead (it ends within 0.6 m) and / or narrow across (nothing 0.35 m to either side): a beam
+					// running across or along the jump, a pole top (narrow both ways), or above head height a bar to swing on
+					const RE::NiPoint3 mid = c.point + fwd * (0.2f * kUnits);
+					const bool l = Down(world, mid.x - right.x * 0.35f * kUnits, mid.y - right.y * 0.35f * kUnits, z + 0.2f * kUnits, z - 0.3f * kUnits).hit;
+					const bool r = Down(world, mid.x + right.x * 0.35f * kUnits, mid.y + right.y * 0.35f * kUnits, z + 0.2f * kUnits, z - 0.3f * kUnits).hit;
+					const bool narrowAcross = !l && !r;
+					if (narrow || narrowAcross) {
+						c.type = c.height >= 1.4f ? EdgeType::kBar : ((narrow && narrowAcross) ? EdgeType::kPole : EdgeType::kBeam);
+					} else {
+						c.type = room && c.height < 2.0f ? EdgeType::kRoof : EdgeType::kHang;
 					}
 					// ledges to catch use AC1's taller reach zones (catch items reach up to 3 m: slots 3 / 6)
 					const bool hands = c.type == EdgeType::kHang || c.type == EdgeType::kBar;
