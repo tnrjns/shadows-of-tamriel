@@ -100,11 +100,24 @@ namespace
 			auto* ue = RE::UserEvents::GetSingleton();
 			for (auto* e = a_events ? *a_events : nullptr; e; e = e->next) {
 				if (auto* b = e->AsButtonEvent(); b && ue) {
-					const auto& id = b->QUserEvent();
-					if (id == ue->jump && b->IsDown()) {
+					// matched by the bound key as well as by name: while an AC1 move has Skyrim's movement controls
+					// switched off, the game no longer names these key events, but the plugin still needs them
+					const auto& name = b->QUserEvent();
+					auto*       map = RE::ControlMap::GetSingleton();
+					auto        is = [&](const RE::BSFixedString& a_event) {
+                        if (name == a_event) {
+                            return true;
+                        }
+                        if (!map) {
+                            return false;
+                        }
+                        const auto key = map->GetMappedKey(a_event, b->GetDevice(), RE::UserEvents::INPUT_CONTEXT_ID::kGameplay);
+                        return key != RE::ControlMap::kInvalid && key == b->GetIDCode();
+					};
+					if (is(ue->jump) && b->IsDown()) {
 						Freerun::NotifyJumpPressed();
 					}
-					if (id == ue->sneak && b->IsDown()) {
+					if (is(ue->sneak) && b->IsDown()) {
 						Freerun::NotifySneakPressed();
 					}
 					if (b->GetDevice() == RE::INPUT_DEVICE::kKeyboard && b->IsDown() &&
@@ -112,15 +125,15 @@ namespace
 						Freerun::PrayKeyPressed();
 					}
 					const float v = b->IsPressed() ? 1.0f : 0.0f;
-					if (id == ue->forward) {
+					if (is(ue->forward)) {
 						Freerun::SetRawMove(0, v);
-					} else if (id == ue->back) {
+					} else if (is(ue->back)) {
 						Freerun::SetRawMove(1, v);
-					} else if (id == ue->strafeLeft) {
+					} else if (is(ue->strafeLeft)) {
 						Freerun::SetRawMove(2, v);
-					} else if (id == ue->strafeRight) {
+					} else if (is(ue->strafeRight)) {
 						Freerun::SetRawMove(3, v);
-					} else if (id == ue->sprint) {
+					} else if (is(ue->sprint)) {
 						Freerun::SetRawSprint(v > 0.0f);
 					}
 				} else if (auto* t = e->AsThumbstickEvent(); t && t->IsLeft()) {
