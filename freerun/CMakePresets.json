@@ -1,0 +1,24 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "default",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build",
+      "toolchainFile": "C:/Users/myste/Downloads/faith-runner/faith-runner/skyrim/.tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
+        "ALTAIR_DEPLOY_DIR": "$env{LOCALAPPDATA}/ModOrganizer/Skyrim Special Edition/mods/Altair AC1 Freerun",
+        "VCPKG_INSTALL_OPTIONS": "--x-buildtrees-root=C:/Users/myste/Downloads/Altair Skyrim Native/freerun/build/vcpkg_buildtrees;--downloads-root=C:/Users/myste/Downloads/Altair Skyrim Native/freerun/build/vcpkg_downloads"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "release",
+      "configurePreset": "default",
+      "configuration": "RelWithDebInfo"
+    }
+  ]
+}

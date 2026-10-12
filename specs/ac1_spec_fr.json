@@ -1,0 +1,256 @@
+{
+"takeoff_front_050": [
+"xx_h_run_front_050cm_footl_to_air"
+],
+"flight_front_050": [
+"xx_h_air_front_050cm_footl_to_freestep"
+],
+"reception_front_050": [
+"xx_h_air_front_050cm_footl_to_freestep_tr_freestep_entry_footr"
+],
+"takeoff_front_300": [
+"xx_h_run_front_300cm_footl_to_air"
+],
+"flight_front_300": [
+"xx_h_air_front_300cm_footl_to_freestep"
+],
+"reception_front_300": [
+"xx_h_air_front_300cm_footl_to_freestep_tr_freestep_entry_footr"
+],
+"takeoff_front_550": [
+"xx_h_run_front_550cm_footl_to_air"
+],
+"flight_front_550": [
+"xx_h_air_front_550cm_footl_to_freestep"
+],
+"reception_front_550": [
+"xx_h_air_front_550cm_footl_to_freestep_tr_freestep_entry_footr"
+],
+"takeoff_up_050": [
+"xx_h_run_up_050cm_footl_to_air"
+],
+"flight_up_050": [
+"xx_h_air_up_050cm_footl_to_freestep"
+],
+"reception_up_050": [
+"xx_h_air_up_050cm_footl_to_freestep_tr_freestep_entry_footr"
+],
+"takeoff_up_300": [
+"xx_h_run_up_300cm_footl_to_air"
+],
+"flight_up_300": [
+"xx_h_air_up_300cm_footl_to_freestep"
+],
+"reception_up_300": [
+"xx_h_air_up_300cm_footl_to_freestep_tr_freestep_entry_footr"
+],
+"takeoff_down_050": [
+"xx_h_run_down_050cm_footl_to_air"
+],
+"flight_down_050": [
+"xx_h_air_down_050cm_footl_to_freestep_down"
+],
+"reception_down_050": [
+"xx_h_air_down_050cm_footl_to_freestep_down_tr_freestep_entry_footr"
+],
+"takeoff_down_550": [
+"xx_h_run_down_550cm_footl_to_air"
+],
+"flight_down_550": [
+"xx_h_air_down_550cm_footl_to_freestep_down"
+],
+"reception_down_550": [
+"xx_h_air_down_550cm_footl_to_freestep_down_tr_freestep_entry_footr"
+],
+"surface_front_050": [
+"xx_h_air_front_050cm_footl_to_surface"
+],
+"surface_front_300": [
+"xx_h_air_front_300cm_footl_to_surface"
+],
+"surface_front_550": [
+"xx_h_air_front_550cm_footl_to_surface"
+],
+"surface_up_050": [
+"xx_h_air_up_050cm_footl_to_surface"
+],
+"surface_up_300": [
+"xx_h_air_up_300cm_footl_to_surface"
+],
+"surface_down_050": [
+"xx_h_air_down_050cm_footl_to_surface"
+],
+"surface_down_550": [
+"xx_h_air_down_550cm_footl_to_surface"
+],
+"hang_catch": [
+"xx_h_air_surface_tr_hangwall_reception_front_straight_max"
+],
+"hang_wait": [
+"xx_h_hangwall_wait"
+],
+"hang_left_open": [
+"xx_h_hangwall_strafe_left_050cm_open"
+],
+"hang_left_close": [
+"xx_h_hangwall_strafe_left_050cm_close"
+],
+"hang_right_open": [
+"xx_h_hangwall_strafe_right_050cm_open"
+],
+"hang_right_close": [
+"xx_h_hangwall_strafe_right_050cm_close"
+],
+"hang_pullup": [
+"xx_h_hangwall_tr_hangknee_footl_a",
+"xx_h_hangwall_tr_hangknee_footl_b",
+"xx_h_hangknee_footl_tr_h_wait_footr_a",
+"xx_h_hangknee_footl_tr_h_wait_footr_b"
+],
+"hang_pullup_run": [
+"xx_h_hangwall_tr_hangknee_footl_a",
+"xx_h_hangwall_tr_hangknee_footl_b",
+"xx_h_hangknee_footl_tr_h_jog_footr_a",
+"xx_h_hangknee_footl_tr_h_jog_footr_b"
+],
+"hang_drop": [
+"xx_h_hangwall_tr_fall_a",
+"xx_h_hangwall_tr_fall_b"
+],
+"pray_blend": [
+"xx_l_pray_wait"
+],
+"beam_land": [
+"xx_h_freestep_entry_footl_tr_beam_crouchwalk_footl"
+],
+"beam_wait": [
+"xx_l_beam_crouchwait_footl"
+],
+"beam_walk": [
+"xx_l_beam_crouchwalk_footl",
+"xx_l_beam_crouchwalk_footr"
+],
+"beam_jog": [
+"xx_h_beam_crouchjog_footl",
+"xx_h_beam_crouchjog_footr"
+],
+"beam_turn": [
+"xx_l_beam_crouchwait_footl_turn180",
+"xx_l_beam_crouchwait_footl_turn180_tr_footr"
+],
+"pole_land": [
+"xx_h_freestep_entry_footl_tr_beam_pilotis_wait_a",
+"xx_h_freestep_entry_footl_tr_beam_pilotis_wait_b"
+],
+"pole_wait": [
+"xx_h_beam_pilotis_wait"
+],
+"wall_entry": [
+"xx_h_wallingfront_entry_footl_a",
+"xx_h_wallingfront_entry_footl_b",
+"xx_h_wallingfront_step1_footr"
+],
+"wall_hang_250": [
+"xx_h_wallingfront_step1_footr_tr_hangwall_251cm_000cm_a",
+"xx_h_wallingfront_step1_footr_tr_hangwall_251cm_000cm_b"
+],
+"wall_hang_430": [
+"xx_h_wallingfront_step1_footr_tr_hangwall_430cm_000cm_a",
+"xx_h_wallingfront_step1_footr_tr_hangwall_430cm_000cm_b"
+],
+"wall_rebound": [
+"xx_h_wallingfront_step1_footr_tr_rebound_footr_a",
+"xx_h_wallingfront_step1_footr_tr_rebound_footr_b",
+"xx_h_wallingfront_step1rebound_back_footl"
+],
+"wall_fall": [
+"xx_h_wallingfront_step1_footr_tr_fall"
+],
+"swing_catch": [
+"xx_h_air_front_300cm_to_swing_tr_swing_front_a"
+],
+"swing_loop": [
+"xx_h_swing_cycle_front_down",
+"xx_h_swing_cycle_back_up",
+"xx_h_swing_cycle_back_down",
+"xx_h_swing_cycle_front_up"
+],
+"btakeoff_front_050": [
+"xx_h_beam_freestep_front_front_050cm_footl_to_air"
+],
+"swingfl_front_050": [
+"xx_h_air_front_050cm_footl_to_swing"
+],
+"btakeoff_front_300": [
+"xx_h_beam_freestep_front_front_300cm_footl_to_air"
+],
+"swingfl_front_300": [
+"xx_h_air_front_300cm_footl_to_swing"
+],
+"btakeoff_front_550": [
+"xx_h_freestep_front_front_550cm_footl_to_air"
+],
+"btakeoff_up_050": [
+"xx_h_freestep_front_up_050cm_footl_to_air"
+],
+"swingfl_up_050": [
+"xx_h_air_up_050cm_footl_to_swing"
+],
+"btakeoff_up_300": [
+"xx_h_freestep_front_up_300cm_footl_to_air"
+],
+"swingfl_up_300": [
+"xx_h_air_up_300cm_footl_to_swing"
+],
+"btakeoff_down_050": [
+"xx_h_beam_freestep_front_down_050cm_footl_to_air"
+],
+"swingfl_down_050": [
+"xx_h_air_down_050cm_footl_to_swing"
+],
+"btakeoff_down_300": [
+"xx_h_beam_freestep_front_down_300cm_footl_to_air"
+],
+"swingfl_down_300": [
+"xx_h_air_down_300cm_footl_to_swing"
+],
+"btakeoff_down_550": [
+"xx_h_freestep_front_down_550cm_footl_to_air"
+],
+"swingfl_down_550": [
+"xx_h_air_down_550cm_footl_to_swing"
+],
+"srelease_front_050": [
+"xx_h_swing_cycle_front_050cm_to_air"
+],
+"srelease_front_300": [
+"xx_h_swing_cycle_front_300cm_to_air"
+],
+"srelease_front_550": [
+"xx_h_swing_cycle_front_550cm_to_air"
+],
+"srelease_down_050": [
+"xx_h_swing_cycle_down_050cm_to_air"
+],
+"srelease_down_300": [
+"xx_h_swing_cycle_down_300cm_to_air"
+],
+"srelease_down_550": [
+"xx_h_swing_cycle_down_550cm_to_air"
+],
+"srelease_up_100": [
+"xx_h_swing_cycle_up_100cm_to_air"
+],
+"srelease_up_300": [
+"xx_h_swing_cycle_up_300cm_to_air"
+],
+"hay_enter": [
+"xx_h_air_to_haystack"
+],
+"hay_wait": [
+"xx_h_haystack_wait"
+],
+"hay_out": [
+"xx_l_haystack_hop_out_tr_l_wait"
+]
+}

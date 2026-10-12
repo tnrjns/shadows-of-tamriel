@@ -1,0 +1,20 @@
+# build output
+build/
+target/
+__pycache__/
+*.pyc
+# game-derived data: never commit (generated locally from your own copies of the games)
+*.hkx
+*.nif
+*.dds
+*.wav
+*.xwm
+*.fuz
+*.esp
+*.esm
+*.esl
+*.pex
+*.pack
+*.bsa
+ac1_clips*.json
+build_*/

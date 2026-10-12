@@ -1,0 +1,17 @@
+{
+    "name": "Everyone (all humanoid NPCs)",
+    "description": "Off by default. AC1 idle, walk/run/sprint in all directions, turning, jumping/falling/landing, sneaking + roll, weapon-drawn movement (AC1 legs, vanilla arms) for 1H/2H/bow/magic, and AC1 one-handed sword attacks and blocking.",
+    "priority": 820116,
+    "disabled": true,
+    "conditions": [
+        {
+            "condition": "HasSpell",
+            "requiredVersion": "1.0.0.0",
+            "negated": true,
+            "Spell": {
+                "pluginName": "AltairLeapOfFaith.esp",
+                "formID": "830"
+            }
+        }
+    ]
+}

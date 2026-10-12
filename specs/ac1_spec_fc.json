@@ -1,0 +1,51 @@
+{
+"fc_hang": [
+"xx_climb_wait_1m"
+],
+"fc_up": [
+"xx_l_climb_1m_u_1lu",
+"xx_l_climb_1lu_u_1m"
+],
+"fc_down": [
+"xx_l_climb_1m_d_1lu",
+"xx_l_climb_1lu_d_1m"
+],
+"fc_left": [
+"xx_l_climb_1m_l_2m",
+"xx_l_climb_2m_l_1m"
+],
+"fc_right": [
+"xx_l_climb_1m_r_2m",
+"xx_l_climb_2m_r_1m"
+],
+"fc_hopup": [
+"xx_h_climbing_climb1m_tr_climb1m_up_l_hand_2_a",
+"xx_h_climbing_climb1m_tr_climb1m_up_l_hand_2_b"
+],
+"fc_hopleft": [
+"xx_h_climbing_climb1m_tr_climb1m_left_2_a",
+"xx_h_climbing_climb1m_tr_climb1m_left_2_b"
+],
+"fc_hopright": [
+"xx_h_climbing_climb1m_tr_climb1m_right_2_a",
+"xx_h_climbing_climb1m_tr_climb1m_right_2_b"
+],
+"fc_jumpcatch": [
+"xx_fall_tr_climb_min_a",
+"xx_fall_tr_climb_min_b"
+],
+"fc_ledgecatch": [
+"xx_h_jumpstraight_footl_to_hangwall_250cm_tr_hangwall_a",
+"xx_h_jumpstraight_footl_to_hangwall_250cm_tr_hangwall_b"
+],
+"fc_reach": [
+"xx_h_wait_hipm_footl_tr_climbing_1m"
+],
+"fc_mantle": [
+"xx_l_climb_1m_u_hangwall",
+"xx_h_hangwall_tr_hangknee_footl_a",
+"xx_h_hangwall_tr_hangknee_footl_b",
+"xx_h_hangknee_footl_tr_h_wait_footr_a",
+"xx_h_hangknee_footl_tr_h_wait_footr_b"
+]
+}

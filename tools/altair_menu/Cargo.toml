@@ -1,0 +1,13 @@
+[package]
+name = "altair_ac1_menu"
+version = "1.0.0"
+edition = "2021"
+
+# SKSE plugin: the Altair AC1 page in SKSE Menu Framework (no dependencies; talks to the framework's C exports).
+[lib]
+name = "AltairAC1Menu"
+crate-type = ["cdylib"]
+
+[profile.release]
+opt-level = 2
+panic = "abort"

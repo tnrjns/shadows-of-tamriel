@@ -1,0 +1,70 @@
+{
+"pk_climb150": [
+"xx_h_wait_hipm_footl_tr_impultionstraight_footl",
+"xx_h_jumpstraight_footl_to_hangknee_footl_150cm",
+"xx_h_jumpstraight_footl_to_hangknee_footl_150cm_tr_hangknee_footl_a",
+"xx_h_jumpstraight_footl_to_hangknee_footl_150cm_tr_hangknee_footl_b",
+"xx_h_hangknee_footl_tr_h_wait_footr_a",
+"xx_h_hangknee_footl_tr_h_wait_footr_b"
+],
+"pk_climb200": [
+"xx_h_wait_hipm_footl_tr_impultionstraight_footl",
+"xx_h_jumpstraight_footl_to_hangwaist_200cm",
+"xx_h_jumpstraight_footl_to_hangwaist_200cm_tr_hangwaist_a",
+"xx_h_jumpstraight_footl_to_hangwaist_200cm_tr_hangwaist_b",
+"xx_h_hangwaist_tr_hangknee_footl",
+"xx_h_hangknee_footl_tr_h_wait_footr_a",
+"xx_h_hangknee_footl_tr_h_wait_footr_b"
+],
+"pk_climb250": [
+"xx_h_wait_hipm_footl_tr_impultionstraight_footl",
+"xx_h_jumpstraight_footl_to_hangwall_250cm",
+"xx_h_jumpstraight_footl_to_hangwall_250cm_tr_hangwall_a",
+"xx_h_jumpstraight_footl_to_hangwall_250cm_tr_hangwall_b",
+"xx_h_hangwall_tr_hangknee_footl_a",
+"xx_h_hangwall_tr_hangknee_footl_b",
+"xx_h_hangknee_footl_tr_h_wait_footr_a",
+"xx_h_hangknee_footl_tr_h_wait_footr_b"
+],
+"pk_climb300": [
+"xx_h_wait_hipm_footl_tr_impultionstraight_footl",
+"xx_h_jumpstraight_footl_to_hangfree_300cm",
+"xx_h_jumpstraight_footl_to_hangfree_300cm_tr_hangfree_a",
+"xx_h_jumpstraight_footl_to_hangfree_300cm_tr_hangfree_b",
+"xx_h_hangfree_tr_hangwaist_a",
+"xx_h_hangfree_tr_hangwaist_b",
+"xx_h_hangwaist_tr_hangknee_footl",
+"xx_h_hangknee_footl_tr_h_wait_footr_a",
+"xx_h_hangknee_footl_tr_h_wait_footr_b"
+],
+"pk_step_l": [
+"xx_h_run_up_050cm_footl_to_air",
+"xx_h_air_up_050cm_footl_to_freestep",
+"xx_h_air_up_050cm_footl_to_freestep_tr_freestep_entry_footr"
+],
+"pk_step_r": [
+"xx_h_run_up_050cm_footr_to_air",
+"xx_h_air_up_050cm_footr_to_freestep",
+"xx_h_air_up_050cm_footr_to_freestep_tr_freestep_entry_footl"
+],
+"pk_vault": [
+"xx_h_run_front_050cm_footl_to_air",
+"xx_h_air_front_050cm_footl_to_passover",
+"xx_h_air_front_050cm_footl_to_passover_tr_passover_handr",
+"xx_h_passover_100cm_handr_front_down_050cm_footl_to_air",
+"xx_h_landing_forward_soft_footl_tr_h_jog_footr_a",
+"xx_h_landing_forward_soft_footl_tr_h_jog_footr_b"
+],
+"pk_fail": [
+"xx_h_collide_full_footl_050cm_a",
+"xx_h_collide_full_footl_050cm_b"
+],
+"pk_landroll": [
+"xx_h_landing_damage_footl_roll",
+"xx_roll_hipm_tr_h_jog_hipm_footr"
+],
+"pk_sneakroll": [
+"xx_roll_hipm",
+"xx_roll_hipm_tr_crouchwait_hipm_footl"
+]
+}

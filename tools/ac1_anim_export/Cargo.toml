@@ -1,0 +1,10 @@
+[package]
+name = "ac1_anim_export"
+version = "0.1.0"
+edition = "2024"
+
+# Reuses the AC1-Movement-Rewritten decoders read-only (see src/main.rs); no dependencies.
+[dependencies]
+
+[profile.release]
+opt-level = 3

@@ -1,0 +1,24 @@
+{
+    "name": "Anyone wearing Altair's robes",
+    "priority": 820218,
+    "conditions": [
+        {
+            "condition": "IsWorn",
+            "requiredVersion": "1.0.0.0",
+            "Form": {
+                "pluginName": "AltairNative.esp",
+                "formID": "801"
+            }
+        },
+        {
+            "condition": "HasSpell",
+            "requiredVersion": "1.0.0.0",
+            "negated": true,
+            "Spell": {
+                "pluginName": "AltairLeapOfFaith.esp",
+                "formID": "831"
+            }
+        }
+    ],
+    "description": "AC1 parkour animations for SkyParkour v3."
+}

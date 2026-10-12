@@ -1,0 +1,24 @@
+{
+    "name": "Player",
+    "priority": 820217,
+    "conditions": [
+        {
+            "condition": "IsActorBase",
+            "requiredVersion": "1.0.0.0",
+            "Actor base": {
+                "pluginName": "Skyrim.esm",
+                "formID": "7"
+            }
+        },
+        {
+            "condition": "HasSpell",
+            "requiredVersion": "1.0.0.0",
+            "negated": true,
+            "Spell": {
+                "pluginName": "AltairLeapOfFaith.esp",
+                "formID": "831"
+            }
+        }
+    ],
+    "description": "AC1 parkour animations for SkyParkour v3."
+}

@@ -1,0 +1,24 @@
+{
+    "name": "Leap armed",
+    "description": "Only while AltairLeapOfFaith.esp's leap point has armed the dive.",
+    "priority": 820140,
+    "conditions": [
+        {
+            "condition": "HasSpell",
+            "requiredVersion": "1.0.0.0",
+            "Spell": {
+                "pluginName": "AltairLeapOfFaith.esp",
+                "formID": "801"
+            }
+        },
+        {
+            "condition": "HasSpell",
+            "requiredVersion": "1.0.0.0",
+            "negated": true,
+            "Spell": {
+                "pluginName": "AltairLeapOfFaith.esp",
+                "formID": "832"
+            }
+        }
+    ]
+}

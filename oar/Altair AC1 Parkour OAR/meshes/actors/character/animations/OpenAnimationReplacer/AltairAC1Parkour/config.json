@@ -1,0 +1,5 @@
+{
+    "name": "Altair AC1 Parkour (SkyParkour)",
+    "author": "AltairNative prototype",
+    "description": "Replaces SkyParkour v3's climb, vault, step, grab, fail and land-roll animations with Altair's AC1 moves. SkyParkour's own timing, motion and sound events are kept. Requires SkyParkour v3."
+}
