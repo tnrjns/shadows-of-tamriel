@@ -67,14 +67,25 @@ namespace Freerun
 
 	void SetControlsLocked(bool a_locked)
 	{
+		// Skyrim's own movement / jump key handlers are switched off (the plugin reads the keys itself). Not
+		// ControlMap::ToggleControls: that is the cutscene switch, and the HUD hides the compass while it is off
+		auto* pc = RE::PlayerControls::GetSingleton();
+		if (!pc) {
+			return;
+		}
 		static bool locked = false;
+		if (a_locked) {
+			pc->data.moveInputVec = { 0.0f, 0.0f };  // no leftover walk from a key held when the move began
+		}
 		if (locked == a_locked) {
 			return;
 		}
-		if (auto* map = RE::ControlMap::GetSingleton()) {
-			map->ToggleControls(RE::UserEvents::USER_EVENT_FLAG::kMovement, !a_locked, false);
-			map->ToggleControls(RE::UserEvents::USER_EVENT_FLAG::kJumping, !a_locked, false);
-			locked = a_locked;
+		locked = a_locked;
+		for (RE::PlayerInputHandler* h : { static_cast<RE::PlayerInputHandler*>(pc->movementHandler),
+				 static_cast<RE::PlayerInputHandler*>(pc->jumpHandler) }) {
+			if (h) {
+				h->inputEventHandlingEnabled = !a_locked;
+			}
 		}
 	}
 

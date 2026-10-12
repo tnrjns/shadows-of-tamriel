@@ -73,7 +73,7 @@ def grid(base, line):
 TEX = os.path.join(MOD, 'textures', 'AltairFreerun')
 dds(os.path.join(TEX, 'grid_d.dds'), 128, 128, grid((150, 150, 150), (70, 70, 70)))
 dds(os.path.join(TEX, 'orange_d.dds'), 128, 128, grid((225, 135, 40), (110, 60, 15)))
-dds(os.path.join(TEX, 'flat_n.dds'), 4, 4, lambda x, y, w, h: (128, 128, 255, 255))
+dds(os.path.join(TEX, 'flat_n.dds'), 4, 4, lambda x, y, w, h: (128, 128, 255, 0))   # alpha = specular mask: 0 = matte
 
 
 # ------------------------------------------------------------------------------------ meshes
@@ -154,8 +154,11 @@ def build(name, sx, sy, sz, tex, ramp=None):
     rb = bhkRigidBodyProps()
     rb.bufType = PynBufferTypes.bhkRigidBodyTBufType
     rb.shapeID = cshape.id
-    rb.collisionFilter_layer = 1         # L_STATIC
-    rb.collisionFilterCopy_layer = 1
+    # the swing bar is on L_PROPS: the player and the plugin's rays still hit it, Skyrim's camera passes through it
+    # (on L_STATIC the camera snapped in to the bar when catching it)
+    layer = 10 if name == 'gb_bar' else 1   # L_PROPS / L_STATIC
+    rb.collisionFilter_layer = layer
+    rb.collisionFilterCopy_layer = layer
     rb.broadPhaseType = 1
     rb.collisionResponse = 1
     rb.collisionResponse2 = 1

@@ -26,6 +26,7 @@ GLOBALS = [  # (id, editor id, default)  - lengths in game units
 G = {e: f for f, e, _ in GLOBALS}
 OFF_SPELLS = [(0x01000830, 'AltairOffLocomotion'), (0x01000831, 'AltairOffParkour'), (0x01000832, 'AltairOffLeapDive')]
 QUST_SETTINGS = 0x01000840
+SNDR_SYNC, SOUN_SYNC = 0x01000850, 0x01000851    # viewpoint synchronization (AltairFreerun.dll plays it)
 
 # Solitude haystack in the gate courtyard (navmesh z=-8412); the portable one waits disabled beside it
 HAY_POS, PORTABLE_POS, HAY_SCALE = (-60760.0, 105500.0, -8395.0), (-60760.0, 105500.0, -8600.0), 1.0
@@ -103,6 +104,8 @@ sndr_leap = sndr(SNDR_LEAP, 'AltairLeapOfFaithSD', r'Data\Sound\FX\AltairAC1\Lea
 sndr_land = sndr(SNDR_LAND, 'AltairHaystackLandSD', r'Data\Sound\FX\AltairAC1\HaystackLand.wav', 0x0007F80C)  # SOMMono02000
 soun_leap = soun(SOUN_LEAP, 'AltairLeapOfFaithSound', SNDR_LEAP)
 soun_land = soun(SOUN_LAND, 'AltairHaystackLandSound', SNDR_LAND)
+sndr_sync = sndr(SNDR_SYNC, 'AltairSynchronizeSD', r'Data\Sound\FX\AltairAC1\Synchronize.wav', 0x0007EDCA)    # SOMStereo
+soun_sync = soun(SOUN_SYNC, 'AltairSynchronizeSound', SNDR_SYNC)
 # --- Place Haystack lesser power: fire-and-forget self script effect
 data = bytearray(152)
 struct.pack_into('<I', data, 0, 0x0200 | 0x0400 | 0x0800)            # no duration / magnitude / area
@@ -152,14 +155,14 @@ qust = record('QUST', QUST_SETTINGS, sub('EDID', zstr('AltairAC1Settings')) +
               vmad('AltairAC1SettingsScript', [(e, f) for f, e, _ in GLOBALS] + [(e, f) for f, e in OFF_SPELLS] +
                    [('AltairPlaceHaystack', SPEL_PLACE), ('AltairPortableHaystack', REF_PORTABLE),
                     ('AltairSolitudeHaystack', REF_HAY)]) +
-              sub('FULL', zstr('Altair AC1 Settings')) +
+              sub('FULL', zstr('Shadows of Tamriel Settings')) +
               sub('DNAM', struct.pack('<HBBII', 0x0011, 0, 0, 0, 0)) +       # start game enabled, run once
               sub('NEXT', b'') + sub('ANAM', bytes(4)))
-groups = [group('GLOB', 0, glob), group('SNDR', 0, sndr_leap + sndr_land), group('SOUN', 0, soun_leap + soun_land),
+groups = [group('GLOB', 0, glob), group('SNDR', 0, sndr_leap + sndr_land + sndr_sync), group('SOUN', 0, soun_leap + soun_land + soun_sync),
           group('MGEF', 0, mgef + mgef_place), group('SPEL', 0, spel + spel_place + off_spells), group('ACTI', 0, acti_hay),
           group('QUST', 0, qust),
           group('WRLD', 0, wrld + world_children)]
-n_records = len(GLOBALS) + 2 + 2 + 2 + 2 + len(OFF_SPELLS) + 1 + 1 + 1 + 1 + 3    # GLOBs SNDR SOUN MGEF SPEL ACTI QUST WRLD CELL REFR
+n_records = len(GLOBALS) + 3 + 3 + 2 + 2 + len(OFF_SPELLS) + 1 + 1 + 1 + 1 + 3    # GLOBs SNDR SOUN MGEF SPEL ACTI QUST WRLD CELL REFR
 n_groups = 8 + 3
 tes4 = (sub('HEDR', struct.pack('<fII', 1.71, n_records + n_groups, 0x841)) +
         sub('CNAM', zstr('AltairNative prototype')) +

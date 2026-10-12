@@ -363,5 +363,116 @@
 ],
 "swing_hang": [
 "xx_h_hangfree_wait"
+],
+"takeoffAL_front_050": [
+"xx_h_freestep_left_front_050cm_footl_to_air"
+],
+"btakeoffAL_front_050": [
+"xx_h_beam_freestep_left_front_050cm_footl_to_air"
+],
+"takeoffAL_front_300": [
+"xx_h_freestep_left_front_300cm_footl_to_air"
+],
+"btakeoffAL_front_300": [
+"xx_h_beam_freestep_left_front_300cm_footl_to_air"
+],
+"takeoffAL_up_050": [
+"xx_h_freestep_left_up_050cm_footl_to_air"
+],
+"takeoffAL_up_300": [
+"xx_h_freestep_left_up_300cm_footl_to_air"
+],
+"takeoffAL_down_050": [
+"xx_h_freestep_left_down_050cm_footl_to_air"
+],
+"btakeoffAL_down_050": [
+"xx_h_beam_freestep_left_down_050cm_footl_to_air"
+],
+"takeoffAL_down_300": [
+"xx_h_freestep_left_down_300cm_footl_to_air"
+],
+"btakeoffAL_down_300": [
+"xx_h_beam_freestep_left_down_300cm_footl_to_air"
+],
+"takeoffAR_front_050": [
+"xx_h_freestep_right_front_050cm_footl_to_air"
+],
+"btakeoffAR_front_050": [
+"xx_h_beam_freestep_right_front_050cm_footl_to_air"
+],
+"takeoffAR_front_300": [
+"xx_h_freestep_right_front_300cm_footl_to_air"
+],
+"btakeoffAR_front_300": [
+"xx_h_beam_freestep_right_front_300cm_footl_to_air"
+],
+"takeoffAR_up_050": [
+"xx_h_freestep_right_up_050cm_footl_to_air"
+],
+"takeoffAR_up_300": [
+"xx_h_freestep_right_up_300cm_footl_to_air"
+],
+"takeoffAR_down_050": [
+"xx_h_freestep_right_down_050cm_footl_to_air"
+],
+"btakeoffAR_down_050": [
+"xx_h_beam_freestep_right_down_050cm_footl_to_air"
+],
+"takeoffAR_down_300": [
+"xx_h_freestep_right_down_300cm_footl_to_air"
+],
+"btakeoffAR_down_300": [
+"xx_h_beam_freestep_right_down_300cm_footl_to_air"
+],
+"takeoffABL_front_050": [
+"xx_h_freestep_backleft_front_050cm_footl_to_air"
+],
+"takeoffABL_front_300": [
+"xx_h_freestep_backleft_front_300cm_footl_to_air"
+],
+"takeoffABL_front_550": [
+"xx_h_freestep_backleft_front_550cm_footl_to_air"
+],
+"takeoffABL_up_050": [
+"xx_h_freestep_backleft_up_050cm_footl_to_air"
+],
+"takeoffABL_up_300": [
+"xx_h_freestep_backleft_up_300cm_footl_to_air"
+],
+"takeoffABL_down_050": [
+"xx_h_freestep_backleft_down_050cm_footl_to_air"
+],
+"takeoffABL_down_300": [
+"xx_h_freestep_backleft_down_300cm_footl_to_air"
+],
+"takeoffABL_down_550": [
+"xx_h_freestep_backleft_down_550cm_footl_to_air"
+],
+"takeoffABR_front_050": [
+"xx_h_freestep_backright_front_050cm_footl_to_air"
+],
+"takeoffABR_front_300": [
+"xx_h_freestep_backright_front_300cm_footl_to_air"
+],
+"takeoffABR_front_550": [
+"xx_h_freestep_backright_front_550cm_footl_to_air"
+],
+"takeoffABR_up_050": [
+"xx_h_freestep_backright_up_050cm_footl_to_air"
+],
+"takeoffABR_up_300": [
+"xx_h_freestep_backright_up_300cm_footl_to_air"
+],
+"takeoffABR_down_050": [
+"xx_h_freestep_backright_down_050cm_footl_to_air"
+],
+"takeoffABR_down_300": [
+"xx_h_freestep_backright_down_300cm_footl_to_air"
+],
+"takeoffABR_down_550": [
+"xx_h_freestep_backright_down_550cm_footl_to_air"
+],
+"sync_wait": [
+"xx_l_beam_crouchwait_footl"
 ]
 }

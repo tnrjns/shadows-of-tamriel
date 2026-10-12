@@ -126,9 +126,11 @@ for i in range(6):                                       # directional ambient c
 struct.pack_into('<4Bf', xcll, 64, 0, 0, 0, 0, 1.0)      # specular, fresnel power
 struct.pack_into('<4B', xcll, 72, 150, 160, 172, 0)      # fog colour far
 struct.pack_into('<fffI', xcll, 76, 0.2, 0.0, 0.0, 0)    # fog max, light fade begin / end, inherit flags
-cell = record('CELL', CELL_ID, sub('EDID', zstr('AltairFreerunGraybox')) + sub('FULL', zstr('Altair Free-run Graybox')) +
-              sub('DATA', struct.pack('<H', 0x0001)) + sub('XCLL', bytes(xcll)) + sub('LTMP', bytes(4)) +
-              sub('XCLW', bytes.fromhex('000000cf')))
+cell = record('CELL', CELL_ID, sub('EDID', zstr('AltairFreerunGraybox')) + sub('FULL', zstr('Shadows of Tamriel Graybox')) +
+              # interior + Show Sky (0x80) + Use Sky Lighting (0x100): Skyrim's sky, sun and day / night over the graybox
+              sub('DATA', struct.pack('<H', 0x0001 | 0x0080 | 0x0100)) + sub('XCLL', bytes(xcll)) + sub('LTMP', bytes(4)) +
+              sub('XCLW', bytes.fromhex('000000cf')) +
+              sub('XCCM', struct.pack('<I', 0x00000812)))   # climate: Skyrim.esm SkyrimClimate (its weathers / skybox)
 oid = CELL_ID & 0xFFFFFF
 cell_tree = group(oid % 10, 2, group((oid // 10) % 10, 3, cell + group(CELL_ID, 6, group(CELL_ID, 9, refs))))
 

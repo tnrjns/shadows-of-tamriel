@@ -11,6 +11,7 @@
 #include "Walling.h"
 #include "HayHide.h"
 #include "Motion.h"
+#include "Synchronize.h"
 #include "SKSEMenuFramework.h"
 
 namespace
@@ -28,6 +29,7 @@ namespace
 			const float yaw0 = a_this->data.angle.z;
 			Freerun::HayUpdate(a_this, a_delta);
 			Freerun::PrayUpdate(a_this, a_delta);
+			Freerun::SyncUpdate(a_this, a_delta);
 			Freerun::LedgeUpdate(a_this, a_delta);
 			Freerun::WallRunUpdate(a_this, a_delta);
 			Freerun::NarrowUpdate(a_this, a_delta);
@@ -37,7 +39,8 @@ namespace
 			// while an AC1 move runs, Skyrim's own movement / jump controls are off (the plugin reads the keys itself):
 			// no running off mid-landing, no camera swinging round to follow A / D on a ledge
 			const bool busy = Freerun::TargetJumpBusy() || Freerun::LedgeActive() || Freerun::NarrowActive() ||
-			                  Freerun::SwingActive() || Freerun::WallRunActive() || Freerun::HayActive();
+			                  Freerun::SwingActive() || Freerun::WallRunActive() || Freerun::HayActive() ||
+			                  Freerun::SyncActive();
 			Freerun::SetControlsLocked(busy);
 			{
 				static bool freeLook = false;
@@ -263,8 +266,8 @@ namespace
 				input->AddEventSink(InputSink::Get());
 			}
 			if (SKSEMenuFramework::IsInstalled()) {
-				SKSEMenuFramework::SetSection("Altair AC1");
-				SKSEMenuFramework::AddSectionItem("Free-run (preview)", RenderPage);
+				SKSEMenuFramework::SetSection("Shadows of Tamriel");
+				SKSEMenuFramework::AddSectionItem("Free-run", RenderPage);
 				SKSEMenuFramework::AddHudElement(DrawOverlay);
 			}
 			logger::info("AltairFreerun P2 ready");

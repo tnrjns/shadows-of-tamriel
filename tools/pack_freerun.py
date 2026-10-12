@@ -7,9 +7,13 @@ Format (little endian):
   clips x (u16 len, name, f32 duration, u32 frames,
            frames x bones x (f32 qx qy qz qw, f32 tx ty tz)   local transforms on the Skyrim skeleton,
            frames x (f32 forward, f32 up),                      AC1 root displacement in metres (jump direction, up)
-           frames x (f32 x, y, z))                              the grip: midpoint of the two middle-finger knuckles
+           frames x (f32 x, y, z),                              the grip: midpoint of the two middle-finger knuckles
                                                                 (the palm, not the wrist), game units, actor space
                                                                 (x right, y forward, z up; for hanging on ledges / bars)
+           frames x f32 yaw)                                    AC1 root heading from the first frame, radians, Skyrim
+                                                                sense (+ = turned right); the side / back free-step
+                                                                takeoffs turn Altair 90 / 180 degrees into the jump
+(AFR3; AFR2 had no yaw)
 """
 import sys, os, json, struct, math
 sys.path.insert(0, r'C:\Users\myste\Downloads\Altair Skyrim Native\tooling\pynifly-29.1.0\io_scene_nifly\hkx')
@@ -37,7 +41,7 @@ def disp_at(keys, t):
     return tuple(keys[-1][1:4])
 
 
-out = bytearray(b'AFR2') + struct.pack('<I', len(names))
+out = bytearray(b'AFR3') + struct.pack('<I', len(names))
 for n in names:
     b = n.encode()
     out += struct.pack('<H', len(b)) + b
@@ -88,6 +92,34 @@ for nm in files:
         out += struct.pack('<3f', m.x, m.y, m.z)
         if f == 0:
             hand0 = m
+    # root heading (AC1 track 00000000), unwrapped from frame 0; a half turn goes the way the clip's name says
+    rk = clips[nm]['rot'].get('00000000', [])
+    def head(k):
+        x, y, z, w = k[1], k[2], k[3], k[4]
+        return math.atan2(-2 * (x * y - w * z), 1 - 2 * (x * x + z * z))   # AC1: + = turned left
+    acc, hs = 0.0, []
+    for i, k in enumerate(rk):
+        if i:
+            dlt = (head(k) - head(rk[i - 1]) + math.pi) % (2 * math.pi) - math.pi
+            if abs(abs(dlt) - math.pi) < 0.05 and 'takeoffA' in nm:
+                dlt = math.pi if ('ABL' in nm or 'AL' in nm.split('_')[0]) else -math.pi
+            acc += dlt
+        hs.append((k[0], acc))
+    for f in range(nf):
+        t = clips[nm]['duration'] * f / max(1, nf - 1)
+        yv = 0.0
+        if hs:
+            yv = hs[-1][1]
+            if t <= hs[0][0]:
+                yv = hs[0][1]
+            for a, b in zip(hs, hs[1:]):
+                if t <= b[0]:
+                    u = (t - a[0]) / max(1e-6, b[0] - a[0])
+                    yv = a[1] + (b[1] - a[1]) * u
+                    break
+        out += struct.pack('<f', -yv)
+    if hs and abs(hs[-1][1]) > 0.1:
+        print(f'{nm}: root turns {math.degrees(-hs[-1][1]):+.0f} deg')
     print(f'{nm}: hands at frame 0 ({hand0.x:.0f}, {hand0.y:.0f}, {hand0.z:.0f})')
     print(f'{nm}: {nf} frames, {dur:.3f} s, displacement fwd {h:.2f} m up {end[2]:+.2f} m')
 os.makedirs(os.path.dirname(OUT), exist_ok=True)

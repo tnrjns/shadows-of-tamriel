@@ -20,7 +20,7 @@ namespace Freerun
 		bool  ledges{ true };        // P3: catch ledges that are too high to land on, hang / shimmy / pull up / drop
 		bool  p4{ true };            // P4: beams (balance walk), poles, swing bars, wall run up
 		bool  hayHide{ true };       // leap of faith into a haystack: hide inside it, hop out
-		float gaitSmoothing{ 0.3f }; // seconds; eases the pose change when switching walk / run / sprint
+		float gaitSmoothing{ 0.0f }; // seconds; eases the pose change when switching walk / run / sprint
 		bool  pray{ true };          // AC1 blend prayer on a key
 		bool  prayCloseEyes{ true }; // the player's eyes close while praying
 		int   prayKey{ 0x30 };       // DirectInput scan code (0x30 = B)

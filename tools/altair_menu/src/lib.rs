@@ -1,4 +1,4 @@
-//! AltairAC1Menu.dll - the "Altair AC1" page in SKSE Menu Framework (Mod Control Panel).
+//! AltairAC1Menu.dll - the "Shadows of Tamriel" page in SKSE Menu Framework (Mod Control Panel).
 //!
 //! No CommonLib: the plugin only talks to SKSE's loader interface and to SKSE Menu Framework's exported C functions
 //! (cimgui-style `ig*` ImGui calls and `AddSectionItem`), so it does not touch game memory and is version independent.
@@ -290,7 +290,7 @@ pub static SKSEPlugin_Version: SKSEPluginVersionData = SKSEPluginVersionData {
     data_version: 1,
     plugin_version: 1,
     name: fixed("AltairAC1Menu"),
-    author: fixed("Altair AC1 Skyrim"),
+    author: fixed("Shadows of Tamriel"),
     support_email: fixed(""),
     version_independence_ex: 1,      // kVersionIndependentEx_NoStructUse
     version_independence: 1 | 2 | 4, // address library, signatures, structs post-629: uses no game addresses at all
@@ -328,7 +328,7 @@ unsafe fn register_page() -> bool {
         return true;
     }
     let Some(gui) = resolve() else { return false };
-    (gui.add_section_item)(c"Altair AC1/Settings".as_ptr(), render);
+    (gui.add_section_item)(c"Shadows of Tamriel/Leap of Faith & Animations".as_ptr(), render);
     *g = Some(gui);
     true
 }

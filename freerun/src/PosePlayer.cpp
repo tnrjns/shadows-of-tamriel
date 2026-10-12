@@ -214,6 +214,26 @@ namespace Freerun
 		}
 	}
 
+	float Clip::YawAt(float a_u) const
+	{
+		if (yaw.empty()) {
+			return 0.0f;
+		}
+		const float x = std::clamp(a_u, 0.0f, 1.0f) * static_cast<float>(yaw.size() - 1);
+		const auto  i = static_cast<std::size_t>(x);
+		const auto  j = std::min(i + 1, yaw.size() - 1);
+		return yaw[i] + (yaw[j] - yaw[i]) * (x - static_cast<float>(i));
+	}
+
+	float Blend::YawAt(float a_u) const
+	{
+		float y = 0.0f;
+		for (const auto& [c, w] : parts) {
+			y += c->YawAt(a_u) * w;
+		}
+		return y;
+	}
+
 	float Blend::Duration() const
 	{
 		float d = 0.0f;
@@ -244,7 +264,8 @@ namespace Freerun
 		const std::vector<char> data((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
 		std::size_t             at = 4;
 		std::uint32_t           nb = 0, nc = 0;
-		if (data.size() < 8 || std::memcmp(data.data(), "AFR2", 4) != 0 || !Read(data, at, nb)) {
+		const bool v3 = data.size() >= 8 && std::memcmp(data.data(), "AFR3", 4) == 0;
+		if (data.size() < 8 || (!v3 && std::memcmp(data.data(), "AFR2", 4) != 0) || !Read(data, at, nb)) {
 			logger::error("pose pack: bad header");
 			return false;
 		}
@@ -286,6 +307,14 @@ namespace Freerun
 					return false;
 				}
 				h = { v[0], v[1], v[2] };
+			}
+			c.yaw.assign(c.frames, 0.0f);
+			if (v3) {
+				for (auto& y : c.yaw) {
+					if (!Read(data, at, y)) {
+						return false;
+					}
+				}
 			}
 		}
 		logger::info("pose pack: {} AC1 clips on {} bones", g_clips.size(), g_bones.size());

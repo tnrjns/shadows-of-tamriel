@@ -30,6 +30,7 @@ namespace Freerun
 			float        sMin{ 0.0f }, sMax{ 0.0f };
 			float        facing{ 1.0f };   // +1 / -1 along the axis (beam); pole: yaw below
 			float        poleYaw{ 0.0f };
+			float        aimYaw{ 0.0f };   // pole: where the next jump goes (the direction you push)
 			float        t{ 0.0f };
 			float        loopT{ 0.0f };
 			float        atEnd{ 0.0f };    // time spent pushing at an end
@@ -68,8 +69,11 @@ namespace Freerun
 		// jump on from the beam / pole to the best target in the facing direction (AC1: free-step jump, kind 1)
 		bool JumpOn(RE::PlayerCharacter* a_player, bool a_auto)
 		{
-			a_player->data.angle.z = Yaw();
+			// look for targets the way he will jump (a pole: where you push), then face him back: a target off to the
+			// side gets AC1's side / back takeoff
+			a_player->data.angle.z = g.pole ? g.aimYaw : Yaw();
 			Update(a_player);
+			a_player->data.angle.z = Yaw();
 			const Snapshot snap = Latest();
 			const Candidate* best = nullptr;
 			for (const auto& c : snap.candidates) {
@@ -177,6 +181,7 @@ namespace Freerun
 			g.pole = true;
 		}
 		g.poleYaw = YawOf(travel);
+		g.aimYaw = g.poleYaw;
 		if (!g.pole) {
 			g.facing = (travel.x * g.axis.x + travel.y * g.axis.y) >= 0.0f ? 1.0f : -1.0f;
 			// the ends: walk the top both ways until it stops
@@ -236,15 +241,8 @@ namespace Freerun
 				const float d = ClipDuration("pole_wait", 2.0f);
 				PlayClip("pole_wait", std::fmod(g.loopT, d) / d);
 			}
-			if (push > 0.5f) {
-				// turn toward where you push, smoothly (not a snap every frame as the camera moves)
-				const float want = YawOf(in);
-				float       diff = std::fmod(want - g.poleYaw + 3.0f * RE::NI_PI, 2.0f * RE::NI_PI) - RE::NI_PI;
-				if (std::abs(diff) > 0.15f) {
-					const float step = 6.0f * a_delta;
-					g.poleYaw += std::clamp(diff, -step, step);
-				}
-			}
+			// aim: where you push (camera relative), else straight ahead
+			g.aimYaw = push > 0.5f ? YawOf(in) : g.poleYaw;
 			Hold(a_player);
 			if (g.state != State::kLand && (jump || (sprint && push > 0.5f && g.t > 0.4f))) {
 				if (!JumpOn(a_player, !jump) && jump) {

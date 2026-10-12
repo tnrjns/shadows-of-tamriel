@@ -3,6 +3,7 @@
 #include "PosePlayer.h"
 #include "TargetJump.h"
 #include "HayHide.h"
+#include "Synchronize.h"
 
 namespace Freerun
 {
@@ -65,7 +66,11 @@ namespace Freerun
 		switch (g_state) {
 		case State::kNone:
 			{
-				if (!pressed || TargetJumpActive() || LedgeActive() || HayActive()) {
+				if (!pressed || TargetJumpActive() || LedgeActive() || HayActive() || SyncActive()) {
+					break;
+				}
+				// at a leap point the key synchronizes instead (AC1's viewpoint)
+				if (SyncTry(a_player)) {
 					break;
 				}
 				bool inJump = false;

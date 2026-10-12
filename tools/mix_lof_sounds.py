@@ -32,5 +32,6 @@ def mix(parts, peak_db, name):
 
 eagle, whoosh = load('3281de70'), load('3f6eec9e')
 mix([(eagle, 0.0, -10), (whoosh, 0.0, -14)], -1.0, 'LeapOfFaith.wav')
+mix([(whoosh, 0.0, -12), (eagle, 0.35, -8), (eagle, 2.4, -16)], -1.0, 'Synchronize.wav')
 land, hay = load('3e6b814d'), load('3d26aa14')
 mix([(land, 0.0, -4), (hay, 0.0, -8)], -2.0, 'HaystackLand.wav')

@@ -33,6 +33,7 @@ namespace Freerun
 			RE::NiPoint3 to;
 			RE::NiPoint3 dir;       // horizontal jump direction
 			float        yaw{ 0.0f };
+			bool         angled{ false };  // a side / back takeoff: he turns into the jump with the clip's root turn
 			Blend        takeoff, flight, reception;
 			float        t1{ 0.0f }, t2{ 0.0f }, tr{ 0.0f };  // takeoff, flight, reception durations
 			float        flightStretch{ 1.0f };
@@ -212,6 +213,24 @@ namespace Freerun
 				if (j.takeoff.Empty()) {
 					j.takeoff = Pick("takeoff", family, Buckets("takeoff", family), d);
 				}
+				// the target off to the side of (or behind) where he faces: AC1's free-step side / back takeoffs, which
+				// turn him 90 / 180 degrees into the jump (from a stand, a perch or a beam; a run goes straight on)
+				{
+					const float off = std::fmod(j.yaw - a_player->data.angle.z + 3.0f * RE::NI_PI, 2.0f * RE::NI_PI) - RE::NI_PI;
+					const bool  running = a_player->AsActorState()->IsSprinting() && std::string(a_takeoff) == "takeoff";
+					const float deg = std::abs(off) * 180.0f / RE::NI_PI;
+					if (!running && !j.hang && j.type != EdgeType::kBar && deg > 45.0f) {
+						const bool        right = off > 0.0f;
+						const bool        beam = std::string(a_takeoff) == "btakeoff";
+						const std::string side = deg > 125.0f ? (right ? "BR" : "BL") : (right ? "R" : "L");
+						const std::string kind = (beam && side.size() == 1 ? "btakeoffA" : "takeoffA") + side;
+						Blend a = Pick(kind.c_str(), family, Buckets("atakeoff", family), d);
+						if (!a.Empty()) {
+							j.takeoff = a;
+							j.angled = true;
+						}
+					}
+				}
 				j.flight = Pick(fk.c_str(), family, Buckets(flightKind, family), d);
 				if (j.flight.Empty()) {
 					j.flight = Pick("flight", family, Buckets("flight", family), d);
@@ -291,7 +310,12 @@ namespace Freerun
 		void Hold(RE::PlayerCharacter* a_player, const RE::NiPoint3& a_at, bool a_onGround)
 		{
 			a_player->SetPosition(a_at, true);
-			a_player->data.angle.z = g_jump.yaw;
+			float yaw = g_jump.yaw;
+			if (g_jump.angled && g_jump.t < g_jump.t1 && g_jump.t1 > 0.0f) {
+				// facing follows AC1's root turn, ending on the jump direction
+				yaw += g_jump.takeoff.YawAt(g_jump.t / g_jump.t1) - g_jump.takeoff.YawAt(1.0f);
+			}
+			a_player->data.angle.z = yaw;
 			if (auto* controller = a_player->GetCharController()) {
 				controller->SetLinearVelocityImpl(RE::hkVector4(0.0f, 0.0f, 0.0f, 0.0f));
 				controller->fallStartHeight = a_at.z;
@@ -326,7 +350,7 @@ namespace Freerun
 		pray = get("bPray", "1") != "0";
 		prayCloseEyes = get("bPrayCloseEyes", "1") != "0";
 		prayKey = static_cast<int>(std::strtol(get("iPrayKey", "0x30").c_str(), nullptr, 0));
-		gaitSmoothing = std::clamp(static_cast<float>(std::atof(get("fGaitSmoothing", "0.30").c_str())), 0.0f, 1.0f);
+		gaitSmoothing = std::clamp(static_cast<float>(std::atof(get("fGaitSmoothing", "0.00").c_str())), 0.0f, 1.0f);
 		SetGaitSmoothing(gaitSmoothing);
 		arcHeight = std::clamp(static_cast<float>(std::atof(get("fArcHeight", "1.0").c_str())), 0.2f, 3.0f);
 		g_packLoaded = LoadPack();

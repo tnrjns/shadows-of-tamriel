@@ -15,8 +15,10 @@ namespace Freerun
 		std::vector<RE::NiPoint3>           trans; // frames x bones
 		std::vector<std::array<float, 2>>   disp;  // frames: AC1 root displacement (forward, up), metres
 		std::vector<RE::NiPoint3>           hands; // frames: midpoint of the hands, actor space (x right, y fwd, z up)
+		std::vector<float>                  yaw;   // frames: AC1 root heading from frame 0, radians (+ = right)
 		std::array<float, 2>                DispAt(float a_u) const;
 		RE::NiPoint3                        HandsAt(float a_u) const;
+		float                               YawAt(float a_u) const;
 	};
 
 	// A weighted set of clips played at the same normalized time (AC1 blends its jump items by distance/height).
@@ -25,6 +27,7 @@ namespace Freerun
 		std::vector<std::pair<const Clip*, float>> parts;
 		float                                      Duration() const;
 		std::array<float, 2>                       DispAt(float a_u) const;
+		float                                      YawAt(float a_u) const;
 		bool                                       Empty() const { return parts.empty(); }
 	};
 
