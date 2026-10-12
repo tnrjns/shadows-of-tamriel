@@ -60,4 +60,6 @@ namespace Freerun
 	bool TargetJumpActive();
 	// True from the takeoff until the landing (reception) has finished: the player's controls stay locked.
 	bool TargetJumpBusy();
+	// True while AltairLeapOfFaith.esp has armed the dive (standing at a leap point): Skyrim's own jump does the leap.
+	bool LeapArmed(RE::PlayerCharacter* a_player);
 }

@@ -96,6 +96,18 @@ namespace Freerun
 			ClearPose();
 			logger::info("{}: {}", g.pole ? "pole" : "beam", a_why);
 		}
+
+		// jump with no target in front: a small hop off forward (AC1 jumps off into the drop)
+		void HopOff(RE::PlayerCharacter* a_player)
+		{
+			const RE::NiPoint3 f = DirOf(Yaw());
+			HoldAt(a_player, PointAt(g.s) + f * (0.35f * U) + RE::NiPoint3{ 0.0f, 0.0f, 0.1f * U }, Yaw(), false, false);
+			Leave(a_player, "hopped off");
+			if (auto* controller = a_player->GetCharController()) {
+				const float s = U * RE::bhkWorld::GetWorldScale();
+				controller->SetLinearVelocityImpl(RE::hkVector4(f.x * 3.0f * s, f.y * 3.0f * s, 3.0f * s, 0.0f));
+			}
+		}
 	}
 
 	bool BeamAxis(const RE::NiPoint3& a_point, const RE::NiPoint3& a_near, RE::NiPoint3& a_axis)
@@ -126,8 +138,8 @@ namespace Freerun
 	void NarrowTryWalkOn(RE::PlayerCharacter* a_player)
 	{
 		auto* controller = a_player->GetCharController();
-		if (!controller || controller->context.currentState != RE::hkpCharacterStateType::kOnGround) {
-			return;
+		if (!controller || controller->context.currentState != RE::hkpCharacterStateType::kOnGround || LeapArmed(a_player)) {
+			return;  // at a leap point the plank is for the leap of faith, not a balance walk
 		}
 		const RE::NiPoint3 feet = a_player->GetPosition();
 		const RE::NiPoint3 fwd = DirOf(a_player->data.angle.z);
@@ -196,6 +208,11 @@ namespace Freerun
 		const RE::NiPoint3 in = InputWorld();
 		const float        push = std::sqrt(in.x * in.x + in.y * in.y);
 
+		// at a leap point: hand back to Skyrim so its jump does the leap of faith
+		if (LeapArmed(a_player)) {
+			Leave(a_player, "leap point - free for the leap of faith");
+			return;
+		}
 		// fell off (pushed, knocked down...)
 		auto* controller = a_player->GetCharController();
 		if (controller && a_player->GetPosition().z < g.origin.z - 0.8f * U) {
@@ -227,7 +244,9 @@ namespace Freerun
 			}
 			Hold(a_player);
 			if (g.state != State::kLand && (jump || (sprint && push > 0.5f && g.t > 0.4f))) {
-				JumpOn(a_player, !jump);
+				if (!JumpOn(a_player, !jump) && jump) {
+					HopOff(a_player);
+				}
 			}
 			return;
 		}
@@ -254,9 +273,10 @@ namespace Freerun
 		case State::kWalk:
 			{
 				if (jump) {
-					if (JumpOn(a_player, false)) {
-						return;
+					if (!JumpOn(a_player, false)) {
+						HopOff(a_player);
 					}
+					return;
 				}
 				if (along < -0.5f) {
 					g.state = State::kTurn;

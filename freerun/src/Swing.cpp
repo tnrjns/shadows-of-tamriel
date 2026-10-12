@@ -28,7 +28,8 @@ namespace Freerun
 			float        jumpClock{ 0.0f };
 			int          cycles{ 0 };
 			float        energy{ 0.0f };  // swing momentum, built up with W / S (AC1 pumps the swing)
-			bool         neutral{ false };  // keys let go since the catch (a key held from the run-up doesn't drop him)
+			bool         neutral{ false };
+			bool         wantRelease{ false };  // jump pressed: let go at the next top of the forward swing  // keys let go since the catch (a key held from the run-up doesn't drop him)
 		};
 		Swing g;
 
@@ -91,6 +92,8 @@ namespace Freerun
 		g.bar = a_bar;
 		g.facing = a_facing;
 		g.state = State::kCatch;
+		TakeSneakPress();  // presses from before the catch don't count
+		TakeJumpPress();
 		// the same spot the catch jump aimed at (the clip's first frame): no jump in position, so no camera kick
 		HoldAt(a_player, SwingHangPosition(g.bar, g.facing, "swing_catch", 0.0f), YawOf(g.facing), false, true);
 		logger::info("swing: caught the bar at ({:.0f} {:.0f} {:.0f})", a_bar.x, a_bar.y, a_bar.z);
@@ -131,6 +134,10 @@ namespace Freerun
 		if (sprint) {
 			g.energy = std::min(1.0f, g.energy + 0.6f * a_delta);  // free-run: he swings through by himself
 		}
+		if (jump) {
+			g.wantRelease = true;
+			g.energy = std::min(1.0f, g.energy + 0.25f);  // a jump press also kicks the swing on
+		}
 		// the cycle runs faster and swings wider with momentum: the still free hang blended with AC1's swing cycle
 		const float d = ClipDuration("swing_loop", 1.77f);
 		const float before = std::fmod(g.loopT, d) / d;
@@ -163,8 +170,10 @@ namespace Freerun
 			return;
 		}
 		// let go forward into a jump at the top of the forward swing, once there is some momentum
-		if (ReadyToRelease(u) && g.energy > 0.35f && (jump || (sprint && g.energy > 0.7f))) {
-			Release(a_player, !jump);
+		if (ReadyToRelease(u) && g.energy > 0.3f && (g.wantRelease || (sprint && g.energy > 0.7f))) {
+			if (!Release(a_player, !g.wantRelease)) {
+				g.wantRelease = false;  // nothing to jump to: keep swinging
+			}
 		}
 	}
 }

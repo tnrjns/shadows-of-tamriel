@@ -14,7 +14,7 @@ namespace Freerun
 		constexpr float kUnits = 70.0f;
 		constexpr auto  kIni = "Data/SKSE/Plugins/AltairFreerun.ini";
 		constexpr float kBlendIn = 0.06f;   // game pose -> AC1 takeoff
-		constexpr float kBlendOut = 0.15f;  // AC1 reception -> game pose (back to the run)
+		constexpr float kBlendOut = 0.4f;   // AC1 reception -> game pose (eased back into the run / idle)
 
 		Settings g_settings;
 
@@ -407,6 +407,7 @@ namespace Freerun
 
 	bool TargetJumpActive() { return g_jump.phase == Phase::kTakeoff || g_jump.phase == Phase::kFlight; }
 	bool TargetJumpBusy() { return g_jump.phase != Phase::kNone; }
+	bool LeapArmed(RE::PlayerCharacter* a_player) { return LeapOfFaithArmed(a_player); }
 
 	void TargetJumpUpdate(RE::PlayerCharacter* a_player, float a_delta)
 	{
@@ -498,7 +499,12 @@ namespace Freerun
 		case Phase::kReception:
 			{
 				// back on the ground, running: AC1's free-step reception, then hand back to the game's animation
-				j.t += a_delta;
+				// coming to a stop (no keys held): the landing plays a little slower and settles into the idle
+				{
+					const auto m = RawMove();
+					const bool going = RawSprint() || std::abs(m.x) > 0.3f || std::abs(m.y) > 0.3f;
+					j.t += a_delta * (going ? 1.0f : 0.75f);
+				}
 				// carried forward by the reception's own motion (the controls stay locked until it has finished)
 				{
 					const auto  d = j.reception.DispAt(std::min(1.0f, j.t / j.tr));

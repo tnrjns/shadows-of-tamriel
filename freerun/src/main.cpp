@@ -38,6 +38,25 @@ namespace
 			const bool busy = Freerun::TargetJumpBusy() || Freerun::LedgeActive() || Freerun::NarrowActive() ||
 			                  Freerun::SwingActive() || Freerun::WallRunActive() || Freerun::HayActive();
 			Freerun::SetControlsLocked(busy);
+			{
+				static bool freeLook = false;
+				auto*       camera = RE::PlayerCamera::GetSingleton();
+				auto*       third = camera && camera->currentState && camera->currentState->id == RE::CameraState::kThirdPerson ?
+				                        static_cast<RE::ThirdPersonState*>(camera->currentState.get()) :
+				                        nullptr;
+				if (third && busy) {
+					third->freeRotationEnabled = true;  // the mouse orbits the camera instead of turning him
+					freeLook = true;
+				} else if (third && freeLook) {
+					freeLook = false;
+					if (a_this->AsActorState()->IsWeaponDrawn()) {
+						// weapon out, the game turns him with the camera again: start from where the camera looks
+						a_this->data.angle.z += third->freeRotation.x;
+						third->freeRotation.x = 0.0f;
+						third->freeRotationEnabled = false;
+					}
+				}
+			}
 			if (!busy) {
 				Freerun::RestoreGravity(a_this);  // safety net: never leave the player floating after a move
 			}
