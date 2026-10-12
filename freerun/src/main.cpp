@@ -25,6 +25,7 @@ namespace
 			if (a_this != RE::PlayerCharacter::GetSingleton() || a_delta <= 0.0f) {
 				return;
 			}
+			const float yaw0 = a_this->data.angle.z;
 			Freerun::HayUpdate(a_this, a_delta);
 			Freerun::PrayUpdate(a_this, a_delta);
 			Freerun::LedgeUpdate(a_this, a_delta);
@@ -45,6 +46,12 @@ namespace
 				                        static_cast<RE::ThirdPersonState*>(camera->currentState.get()) :
 				                        nullptr;
 				if (third && busy) {
+					if (freeLook) {
+						// the free camera is held relative to his facing: when a move turns him (a pole perch turning to
+						// where you push), turn the offset back so the camera stays put instead of chasing him round
+						const float turned = std::fmod(a_this->data.angle.z - yaw0 + 3.0f * RE::NI_PI, 2.0f * RE::NI_PI) - RE::NI_PI;
+						third->freeRotation.x -= turned;
+					}
 					third->freeRotationEnabled = true;  // the mouse orbits the camera instead of turning him
 					freeLook = true;
 				} else if (third && freeLook) {

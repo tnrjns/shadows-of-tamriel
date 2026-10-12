@@ -118,10 +118,13 @@ namespace Freerun
 		for (int i = 0; i < 12; ++i) {
 			const float        a = static_cast<float>(i) * RE::NI_PI / 12.0f;
 			const RE::NiPoint3 d{ std::sin(a), std::cos(a), 0.0f };
-			bool               h1 = false, h2 = false;
+			// long: the top goes on 0.5 m both ways, or 1 m one way (landed near an end of the beam)
+			bool               h1 = false, h2 = false, f1 = false, f2 = false;
 			TopAt(a_point + d * (0.5f * U), a_point.z, &h1);
 			TopAt(a_point - d * (0.5f * U), a_point.z, &h2);
-			if (h1 && h2) {
+			TopAt(a_point + d * (1.0f * U), a_point.z, &f1);
+			TopAt(a_point - d * (1.0f * U), a_point.z, &f2);
+			if ((h1 && h2) || (h1 && f1) || (h2 && f2)) {
 				const float score = std::abs(d.x * a_near.x + d.y * a_near.y);
 				if (score > best) {
 					best = score;
