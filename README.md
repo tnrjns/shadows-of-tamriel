@@ -17,12 +17,6 @@ retargeted to the Skyrim skeleton by the tools here.
 > extracted animations, sounds, textures or meshes. Everything game-derived is generated locally from your own
 > legitimate copies of the games.
 
-## Demo
-
-[![Shadows of Tamriel - greybox demo (click to watch)](docs/demo_thumb.jpg)](https://github.com/tnrjns/shadows-of-tamriel/releases/download/demo-video/Shadows.of.Tamriel.mp4)
-
-*Click the image to watch the greybox demo (1080p, 1:26).*
-
 ## What's in it
 
 | Part | What it does |
