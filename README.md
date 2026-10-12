@@ -17,6 +17,13 @@ retargeted to the Skyrim skeleton by the tools here.
 > extracted animations, sounds, textures or meshes. Everything game-derived is generated locally from your own
 > legitimate copies of the games.
 
+## Demo
+
+[![Shadows of Tamriel - swing bar, viewpoint synchronization and leap of faith (click for the full video)](docs/demo.gif)](https://www.youtube.com/watch?v=QjH20tMcsJg)
+
+**[▶ Watch the full greybox demo on YouTube](https://www.youtube.com/watch?v=QjH20tMcsJg)**: AC1 locomotion, free-running, beams,
+poles, the swing bar, ledges, viewpoint synchronization and the leap of faith.
+
 ## What's in it
 
 | Part | What it does |
