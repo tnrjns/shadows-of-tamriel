@@ -28,8 +28,19 @@ retargeted to the Skyrim skeleton by the tools here.
 
 Games: a legitimate PC copy of **Skyrim Special Edition / Anniversary Edition** and of **Assassin's Creed (Director's Cut)**.
 
-Skyrim mods: SKSE, Address Library, Open Animation Replacer, SKSE Menu Framework, PapyrusUtil, SkyParkour (for the
-parkour animations), True Directional Movement (optional).
+Required Skyrim mods (latest versions; SKSE must match your Skyrim version):
+
+- SKSE
+- Address Library for SKSE Plugins
+- Open Animation Replacer
+- PapyrusUtil
+- SKSE Menu Framework (the in-game settings pages)
+
+Optional:
+
+- SkyParkour, plus Pandora or Nemesis to generate its behaviors: only for the AC1 vault / climb / landing-roll
+  animations. Free-running, ledges, beams and the leap of faith work without it.
+- True Directional Movement: recommended for AC1-style movement.
 
 Tools: Rust, Visual Studio 2022+ Build Tools with CMake, vcpkg, Blender 5.x with PyNifly, Python 3, the Creation Kit's
 Papyrus compiler.
