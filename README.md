@@ -1,4 +1,6 @@
-# Altaïr AC1 for Skyrim
+# Shadows of Tamriel
+
+*Assassin's Creed 1's Altaïr, in Skyrim.*
 
 **Work in progress.** Assassin's Creed 1's movement, native in Skyrim SE/AE: your character stays a normal Skyrim
 character (physics, camera, combat, saves) but moves, free-runs and takes leaps of faith like Altaïr.
